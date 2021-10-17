@@ -12,7 +12,7 @@ services:
       DEBUG: "true"
     env_file:
       - .env
-    command: uvicorn app:app --reload --workers 1 --host 0.0.0.0 --port 8080 --reload-dir ./dir1
+    command: uvicorn server.app:app --reload --workers 1 --host 0.0.0.0 --port 8080 --reload-dir ./dir1
     depends_on:
       - db
 
