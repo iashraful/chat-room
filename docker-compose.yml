@@ -3,18 +3,29 @@ version: "3"
 services:
   api:
     restart: always
-    build: .
+    container_name: chat_room_server
+    build: ./server
     ports:
       - "8083:8080"
     volumes:
-      - .:/api
+      - ./server:/api
     environment:
       DEBUG: "true"
     env_file:
       - .env
-    command: uvicorn server.app:app --reload --workers 1 --host 0.0.0.0 --port 8080 --reload-dir ./dir1
+    command: uvicorn app:app --reload --workers 1 --host 0.0.0.0 --port 8080 --reload-dir ./dir1
     depends_on:
       - db
+  client:
+    build: ./client
+    restart: always
+    container_name: chat_room_client
+    command: sh -c "yarn install && yarn serve"
+    working_dir: /client
+    volumes:
+      - ./client:/client:cached
+    ports:
+      - "8084:8080"
 
   db:
     image: mongo:4.4.6
