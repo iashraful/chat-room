@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  api:
+    restart: always
+    build: .
+    ports:
+      - "8083:8080"
+    volumes:
+      - .:/api
+    environment:
+      DEBUG: "true"
+    env_file:
+      - .env
+    command: uvicorn app:app --reload --workers 1 --host 0.0.0.0 --port 8080 --reload-dir ./dir1
+    depends_on:
+      - db
+
+  db:
+    image: mongo:4.4.6
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 27017
+    command: mongod --quiet
