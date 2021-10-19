@@ -13,7 +13,7 @@ services:
       DEBUG: "true"
     env_file:
       - .env
-    command: sh -c "uvicorn chat_room.app:app --host=0.0.0.0 --port=8080 --reload"
+    command: sh -c "uvicorn chat_room.main:app --host=0.0.0.0 --port=8080 --reload"
     depends_on:
       - db
   client:
