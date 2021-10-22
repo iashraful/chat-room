@@ -1,9 +1,7 @@
-from pydantic import EmailStr
-
-from chat_room.core.base_model import ModelBase
+from pydantic import EmailStr, BaseModel
 
 
-class UserCreateSchema(ModelBase):
+class UserCreateSchema(BaseModel):
     name: str
     email: EmailStr
     password: str
