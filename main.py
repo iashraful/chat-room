@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from chat_room.app.user.routes import user_router
+from chat_room.auth.routes import auth_router
 from chat_room.core import database
 from chat_room.core.config import settings
 
@@ -36,9 +37,11 @@ if settings.CORS_ORIGINS:
 async def index():
     return {"Health": "OK!"}
 
+
 # Includes Routes here
 app.include_router(user_router, prefix=settings.API_V1_PREFIX)
+app.include_router(auth_router, prefix="/api")
 
 
 if __name__ == "__main__":
-    uvicorn.run('main:app', host="0.0.0.0", port=8080, reload=True, access_log=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True, access_log=True)

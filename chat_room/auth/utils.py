@@ -21,11 +21,13 @@ def get_password_hash(password: str) -> str:
     return PWD_CONTEXT.hash(password)
 
 
-async def authenticate(*, email: EmailStr, password: str, db: DBClient) -> Optional[User]:
-    user = await db[settings.DB_NAME][User.collection_name()].find_one({'email': email})
+async def authenticate(
+    *, email: EmailStr, password: str, db: DBClient
+) -> Optional[User]:
+    user = await db[settings.DB_NAME][User.collection_name()].find_one({"email": email})
     if not user:
         return None
-    if not verify_password(password, user.password):
+    if not verify_password(password, user.get("password")):
         return None
     return user
 

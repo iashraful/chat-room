@@ -1,14 +1,11 @@
-from typing import List
-
 from chat_room.app.user.models import User
 from chat_room.app.user.schema import UserCreateSchema
 from chat_room.auth.utils import get_password_hash
 from chat_room.core.config import settings
 from chat_room.core.database import DBClient, get_database
+from chat_room.core.response import BaseResponse
 from fastapi import Depends, HTTPException
 from starlette import status
-
-from chat_room.core.response import BaseResponse
 
 
 async def create_user(user: UserCreateSchema, db: DBClient = Depends(get_database)):
