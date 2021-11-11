@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .views import create_user
+from .views import create_user, get_user
 
 user_router = APIRouter(
     prefix="",
@@ -8,3 +8,4 @@ user_router = APIRouter(
 )
 
 user_router.add_api_route("/users", create_user, methods=["POST"])
+user_router.add_api_route("/users", get_user, methods=["GET"])
