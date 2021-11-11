@@ -7,6 +7,6 @@ user_router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-user_router.add_api_route("/user/{email}", get_user, methods=["GET"])
+user_router.add_api_route("/users/{email}", get_user, methods=["GET"])
 user_router.add_api_route("/users", create_user, methods=["POST"])
 user_router.add_api_route("/users", get_users, methods=["GET"])
