@@ -1,4 +1,4 @@
-from http.client import HTTPException
+from fastapi.exceptions import HTTPException
 
 from fastapi.param_functions import Depends
 from starlette import status
