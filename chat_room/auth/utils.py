@@ -1,10 +1,11 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+from fastapi.exceptions import HTTPException
 from typing import Optional
 
+from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import EmailStr
-
-from jose import jwt, JWTError
+from starlette import status
 
 from chat_room.app.user.models import User
 from chat_room.core.config import settings
@@ -40,6 +41,14 @@ def create_access_token(*, sub: str) -> str:
     )
 
 
+def create_refresh_token(*, sub: str) -> str:
+    return _create_token(
+        token_type="refresh_token",
+        lifetime=timedelta(hours=settings.REFRESH_TOKEN_EXPIRE_HOURS),
+        sub=sub,
+    )
+
+
 def _create_token(token_type: str, lifetime: timedelta, sub: str) -> str:
     payload = {}
     expire = datetime.utcnow() + lifetime
@@ -49,3 +58,19 @@ def _create_token(token_type: str, lifetime: timedelta, sub: str) -> str:
     payload["sub"] = str(sub)
 
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+
+
+def create_from_refresh_token(token: str) -> str:
+    try:
+        payload = jwt.decode(
+            token=token, key=settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM]
+        )
+        if payload and payload["type"] == "refresh_token":
+            return create_access_token(sub=payload["sub"]), create_refresh_token(
+                sub=payload["sub"]
+            )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )

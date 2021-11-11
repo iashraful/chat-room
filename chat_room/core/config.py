@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str = config("JWT_SECRET", default="")
     JWT_ALGORITHM: str = config("JWT_ALGORITHM", default="")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = config("ACCESS_TOKEN_EXPIRE_MINUTES", default=15)
-    REFRESH_TOKEN_EXPIRE_HOURS: int = config("REFRESH_TOKEN_EXPIRE_HOURS", default=12)
+    REFRESH_TOKEN_EXPIRE_HOURS: int = config("REFRESH_TOKEN_EXPIRE_HOURS", default=2)
 
     TIMEZONE: str = config("TIMEZONE", default="Asia/Dhaka")
 
