@@ -1,17 +1,15 @@
 from fastapi import Depends, HTTPException
 from fastapi.param_functions import Security
-from fastapi.security.http import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security.http import HTTPAuthorizationCredentials
 from pydantic.networks import EmailStr
 from starlette import status
 
 from chat_room.app.user.models import User
 from chat_room.app.user.schema import UserCreateSchema
-from chat_room.auth.utils import get_password_hash
+from chat_room.auth.utils import get_password_hash, request_user, security
 from chat_room.core.config import settings
 from chat_room.core.database import DBClient, get_database
 from chat_room.core.response import BaseResponse, SingleResponse
-
-security = HTTPBearer()
 
 
 async def create_user(user: UserCreateSchema, db: DBClient = Depends(get_database)):
@@ -39,7 +37,7 @@ async def create_user(user: UserCreateSchema, db: DBClient = Depends(get_databas
 async def get_user(
     email: EmailStr,
     db: DBClient = Depends(get_database),
-    credentials: HTTPAuthorizationCredentials = Security(security),
+    request_user: dict = Depends(request_user),
 ):
     collection = db[settings.DB_NAME][User.collection_name()]
     _user = await collection.find_one({"email": email})

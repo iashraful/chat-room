@@ -8,4 +8,4 @@ user_router = APIRouter(
 )
 
 user_router.add_api_route("/users", create_user, methods=["POST"])
-user_router.add_api_route("/users", get_user, methods=["GET"])
+user_router.add_api_route("/user/{email}", get_user, methods=["GET"])
