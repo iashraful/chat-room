@@ -16,6 +16,7 @@ from chat_room.auth.utils import (
     create_refresh_token,
 )
 from chat_room.core.database import DBClient, get_database
+from chat_room.core.response import BaseResponse
 
 
 async def auth_token(login: AuthLoginSchema, db: DBClient = Depends(get_database)):
@@ -23,11 +24,12 @@ async def auth_token(login: AuthLoginSchema, db: DBClient = Depends(get_database
     if user:
         token = create_access_token(sub=user.get("email"))
         refresh_token = create_refresh_token(sub=user.get("email"))
-        return LoginResponse(
-            msg="Login successful.",
-            status=status.HTTP_200_OK,
+        data = LoginResponse(
             auth_token=token,
             refresh_token=refresh_token,
+        )
+        return BaseResponse(
+            msg="Login successful.", status=status.HTTP_200_OK, data=data
         )
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
@@ -39,10 +41,11 @@ async def refresh_token(
     token: RefreshTokenSchema, db: DBClient = Depends(get_database)
 ):
     auth_token, new_refresh_token = create_from_refresh_token(token=token.refresh_token)
-    
-    return RefreshTokenResponse(
-        msg="Refresh token created successfully.",
-        status=status.HTTP_200_OK,
+
+    data = RefreshTokenResponse(
         auth_token=auth_token,
         refresh_token=new_refresh_token,
+    )
+    return BaseResponse(
+        msg="Refresh token created successfully.", status=status.HTTP_200_OK, data=data
     )

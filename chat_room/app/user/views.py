@@ -9,7 +9,7 @@ from chat_room.app.user.schema import UserCreateSchema, UserListResponse
 from chat_room.auth.utils import get_password_hash, request_user, security
 from chat_room.core.config import settings
 from chat_room.core.database import DBClient, get_database
-from chat_room.core.response import BaseResponse, ListResponse, SingleResponse
+from chat_room.core.response import BaseResponse
 from chat_room.core.utility import async_cursor_parser
 
 
@@ -49,7 +49,7 @@ async def get_user(
         )
     if "password" in _user:
         _user.pop("password")
-    return SingleResponse(
+    return BaseResponse(
         status=status.HTTP_200_OK, msg="User fetched successfully.", data=_user
     )
 

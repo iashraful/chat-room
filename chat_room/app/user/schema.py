@@ -1,7 +1,7 @@
 from typing import List
 from pydantic import BaseModel, EmailStr
 
-from chat_room.core.response import BaseResponse, ListResponse
+from chat_room.core.response import BaseResponse
 
 
 class UserCreateSchema(BaseModel):
@@ -19,5 +19,5 @@ class UserListSchema(BaseModel):
     is_superuser: bool
 
 
-class UserListResponse(ListResponse):
+class UserListResponse(BaseResponse):
     data: List[UserListSchema]
