@@ -5,11 +5,12 @@ from pydantic.networks import EmailStr
 from starlette import status
 
 from chat_room.app.user.models import User
-from chat_room.app.user.schema import UserCreateSchema
+from chat_room.app.user.schema import UserCreateSchema, UserListResponse
 from chat_room.auth.utils import get_password_hash, request_user, security
 from chat_room.core.config import settings
 from chat_room.core.database import DBClient, get_database
-from chat_room.core.response import BaseResponse, SingleResponse
+from chat_room.core.response import BaseResponse, ListResponse, SingleResponse
+from chat_room.core.utility import async_cursor_parser
 
 
 async def create_user(user: UserCreateSchema, db: DBClient = Depends(get_database)):
@@ -50,4 +51,16 @@ async def get_user(
         _user.pop("password")
     return SingleResponse(
         status=status.HTTP_200_OK, msg="User fetched successfully.", data=_user
+    )
+
+
+async def get_users(
+    db: DBClient = Depends(get_database),
+    request_user: dict = Depends(request_user),
+):
+    collection = db[settings.DB_NAME][User.collection_name()]
+    cursor = collection.find()
+    _users = await async_cursor_parser(cursor=cursor)
+    return UserListResponse(
+        status=status.HTTP_200_OK, msg="User fetched successfully.", data=_users
     )
