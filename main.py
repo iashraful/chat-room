@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from chat_room.app.chat.routes import chat_router
 from chat_room.app.user.routes import user_router
 from chat_room.auth.routes import auth_router
 from chat_room.core import database
@@ -39,8 +40,9 @@ async def index():
 
 
 # Includes Routes here
-app.include_router(user_router, prefix=settings.API_V1_PREFIX)
 app.include_router(auth_router, prefix="/api")
+app.include_router(user_router, prefix=settings.API_V1_PREFIX)
+app.include_router(chat_router, prefix=settings.API_V1_PREFIX)
 
 
 if __name__ == "__main__":

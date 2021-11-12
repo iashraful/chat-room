@@ -99,6 +99,10 @@ async def request_user(
     user = user = await db[settings.DB_NAME][User.collection_name()].find_one(
         {"email": email}
     )
+    if "_id" in user:
+        user["id"] = str(user.pop("_id"))
+    if "password" in user:
+        user.pop("password")
     if user is None:
         raise HTTPException(
             detail="Could not validate credentials.",
