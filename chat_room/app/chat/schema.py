@@ -8,3 +8,8 @@ class GroupCreateSchema(BaseModel):
     logo: Optional[str]
     subscribers: List[EmailStr]
     moderators: Optional[List[EmailStr]]
+
+
+class InboxCreateSchema(BaseModel):
+    logo: Optional[str]
+    subscribers: List[EmailStr]

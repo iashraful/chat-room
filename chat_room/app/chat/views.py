@@ -1,9 +1,11 @@
+from fastapi.exceptions import HTTPException
 from fastapi.param_functions import Depends
 from starlette import status
-from chat_room.app.chat.models import Group
-from chat_room.app.chat.schema import GroupCreateSchema
-from chat_room.auth.utils import request_user
 
+from chat_room.app.chat.models import Group, Inbox
+from chat_room.app.chat.schema import GroupCreateSchema, InboxCreateSchema
+from chat_room.app.chat.utility import encode_access_key
+from chat_room.auth.utils import request_user
 from chat_room.core.config import settings
 from chat_room.core.database import DBClient, get_database
 from chat_room.core.response import BaseResponse
@@ -32,4 +34,35 @@ async def create_group(
     await collection.insert_one(provided_document)
     return BaseResponse(
         msg="Group created successfully.", status=status.HTTP_201_CREATED
+    )
+
+
+async def create_inbox(
+    inbox: InboxCreateSchema,
+    db: DBClient = Depends(get_database),
+    current_user: dict = Depends(request_user),
+):
+    if len(inbox.subscribers):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Inbox need at least two participants.",
+        )
+    collection = db[settings.DB_NAME][Inbox.collection_name()]
+    provided_document = inbox.dict()
+
+    provided_document["access_key"] = encode_access_key("|".join(inbox.subscribers))
+    await collection.insert_one(provided_document)
+    return BaseResponse(
+        msg="Index created successfully.", status=status.HTTP_201_CREATED
+    )
+
+
+async def get_inboxes(
+    db: DBClient = Depends(get_database), current_user: dict = Depends(request_user)
+):
+    collection = db[settings.DB_NAME][Inbox.collection_name()]
+    cursor = collection.find()
+    inboxes = await async_cursor_parser(cursor=cursor)
+    return BaseResponse(
+        msg="Inbox fetched successfully.", status=status.HTTP_200_OK, data=inboxes
     )
