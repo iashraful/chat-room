@@ -70,8 +70,9 @@ async def get_inboxes(
     )
 
 
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
+async def websocket_endpoint(websocket: WebSocket):
     await socket_mgr.connect(websocket)
     while True:
         data = await websocket.receive_text()
-        await socket_mgr.broadcast(f"Client {client_id}: {data}")
+        print(data)
+        await socket_mgr.broadcast(f"Data: {data}")
